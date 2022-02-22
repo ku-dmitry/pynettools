@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import requests
-from beautifulsoup import BeautifulSoup
+from bs4 import BeautifulSoup
 import urllib.parse
 
 
@@ -11,7 +11,7 @@ def request(url):
         pass
 
 
-target_url = "http://ya.ru"
+target_url = ""
 response = request(target_url)
 
 parsed_html = BeautifulSoup(response.content)
